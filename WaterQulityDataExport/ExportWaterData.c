@@ -30,17 +30,15 @@ int main(void)
 	int fd;
 	char cmd;
 
-
 	wiringPiSetup();    //调用此函数来进行初始化工作。
 
-	
+
 	fd =serialOpen("/dev/ttyAMA1",115200); //打开串口
 
 	printf("working ... \n");
 	serialPrintf(fd,"hello world!!! \n");
 	sleep(3);
 	printf("sleep 3 second... \n");
-
 
 	serialClose(fd);
 
