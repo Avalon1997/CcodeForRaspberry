@@ -15,6 +15,7 @@
 /* ---------- Include ---------- */
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <unistd.h>
 #include <string.h>
 #include "wiringPi.h"
@@ -31,34 +32,41 @@ char Waterdata_CODtest[] = {0x01,0x06,0x00,0x01,0x03,0xE8,0xD8,0xB4};
 double x;
 int y,i = 0;
 char transbuf[] = {0x00,0x00};
+char transbuf1[] = {0x00,0x00};
 unsigned short int CRC16 = 0;
 
 /**
  * @brief 
  * 
  */
-void IntToHex(int a)
-{
-    int IntToHex_i = 0;
-    if (a < 16)
+int IntToHex(int a,unsigned char *hex)
+{   i = 0;
+    while (a)
     {
-        if (a < 10)
-            transbuf[IntToHex_i] = a + '0';
+        if (a % 16 >= 10)
+            hex[i] = a % 16 + 55;
         else
-            transbuf[IntToHex_i] = a - 10 + 'A';
-    }
-    else
-    {
-        IntToHex(a / 16);
-        IntToHex_i++;
-        a %= 16;
-        if (a < 10)
-            transbuf[IntToHex_i] = a + '0';
-        else
-            transbuf[IntToHex_i] = a - 10 + 'A';
-
+            hex[i] = a % 16 + 48;
+        i++;
+        a = a / 16;
     }
 }
+
+/**
+ * @brief 
+ * 
+ */
+int DecToHex(int dec, unsigned char *hex, int length) 
+{ 
+    
+	for(int i=length-1; i>=0; i--) 
+	{ 
+		hex[i] = (dec%256)&0xFF; 
+		dec /= 256; 
+	} 
+	
+	return 0; 
+} 
 
 
 /* ---------------------------------------------------------------------- Tool Function -------------------------------------------------------------------------- */
@@ -173,19 +181,53 @@ void Exportwater(char *name)
     /*---------- Send the Data ----------*/
 	// serialPrintf(fd,"%s \n",data);
     x = atof(data);
-    y = (int)x;
+    y = (int)x+400;
     // serialPrintf(fd,"%.6f \n",x);
     // serialPuts(fd,Waterdata_COD);
     // serialPrintf(fd,"%s",Waterdata_COD);
-    printf("y的值是:%d x的值是：%f \n",y);
-    printf("转换数值格式... \n");
+    printf("转换数值格式... 双精度数值为:%f... 整数数值为:%d\n",x,y);
 
-    IntToHex(y);
-    serialPutchar(fd,transbuf[0]);
-    serialPutchar(fd,transbuf[1]);
-    memv(Waterdata_COD,transbuf,5,1,2);
+    
+
+    // IntToHex(y,transbuf);
+
+    // serialPutchar(fd,transbuf[0]);
+    // serialPutchar(fd,transbuf[1]);
+
+    // memv(Waterdata_COD,transbuf,5,1,2);
+
+    // CRC16 = ModBus_CRC16(Waterdata_COD,6);
+    // Waterdata_COD[6]=(unsigned char)CRC16&0xFF;
+    // Waterdata_COD[7]=(unsigned char)(CRC16>>8)&0xFF;
+
+    // sleep(1);
+
+    // printf("初始化模拟量模块...\n");
+    // for (i=0;i<sizeof(analog_config);i++)
+    // {
+    //     serialPutchar(fd,analog_config[i]);
+    // }
+
+
+
+    // sleep(1);
+
+    // printf("发送数值...\n");
+    // for (i=0;i<sizeof(Waterdata_COD);i++)
+    // {
+    //     serialPutchar(fd,Waterdata_COD[i]);
+    // }
+
+    //---------------------------------
+    printf("另一种方式...");
+    DecToHex(y,transbuf1,2);
+    serialPutchar(fd,transbuf1[0]);
+    serialPutchar(fd,transbuf1[1]);
+    memv(Waterdata_COD,transbuf1,5,1,2);
+
     CRC16 = ModBus_CRC16(Waterdata_COD,6);
-
+    Waterdata_COD[6]=(unsigned char)CRC16&0xFF;
+    Waterdata_COD[7]=(unsigned char)(CRC16>>8)&0xFF;
     sleep(1);
 
     printf("初始化模拟量模块...\n");
@@ -203,13 +245,8 @@ void Exportwater(char *name)
     {
         serialPutchar(fd,Waterdata_COD[i]);
     }
-
-    // for (i=0;i<sizeof(Waterdata_CODtest);i++)
-    // {
-    //     serialPutchar(fd,Waterdata_CODtest[i]);
-    // }
-
-
+    
+    //--------------------------------------
     sleep(1);
     printf("发送完成...\n");
 

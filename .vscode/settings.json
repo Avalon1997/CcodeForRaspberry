@@ -3,6 +3,8 @@
         "wiringserial.h": "c",
         "stdio.h": "c",
         "unistd.h": "c",
-        "limits": "c"
+        "limits": "c",
+        "stdlib.h": "c",
+        "readparameters.h": "c"
     }
 }

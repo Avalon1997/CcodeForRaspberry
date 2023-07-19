@@ -129,6 +129,9 @@ void Exportwater(char *name)
 
     /*---------- Send the Data ----------*/
 	serialPrintf(fd,"%s \n",data);
+    // DecToHex(data,);
+
+
 
     sleep(1);
     printf("发送完成...\n");
@@ -137,6 +140,22 @@ void Exportwater(char *name)
 	serialClose(fd);
 }
 
+
+/**
+ * @brief 
+ * 
+ */
+int DecToHex(int dec, unsigned char *hex, int length) 
+{ 
+    
+	for(int i=length-1; i>=0; i--) 
+	{ 
+		hex[i] = (dec%256)&0xFF; 
+		dec /= 256; 
+	} 
+	
+	return 0; 
+} 
 
 
 
