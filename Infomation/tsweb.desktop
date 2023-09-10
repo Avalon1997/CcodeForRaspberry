@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=tsimenweb
+Comment=tsimen program
+Exec=/usr/bin/sh /usr/bin/tswebnowait
+Icon=/home/tsimen/Pictures/Baize.png
+Terminal=false
+#MultipulArgs=false
+Type=Application
+Categories=Application;Development;
+StartupNotify=ture

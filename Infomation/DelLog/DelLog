@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# 定期清除一年前的日志文件。
+
+execute_time=$(date "+%Y-%m-%d %H:%M:%S")
+executelog_path="/home/tsimen/Infomation/DelLog/del.log"
+current_time=$(date "+%Y")
+delete_time=` expr $current_time - 1`
+
+echo "$execute_time ==================================================" >> $executelog_path
+
+echo "$execute_time 当前的年份为 $current_time" >> $executelog_path
+
+echo "$execute_time 需要删除数据的年份为 $delete_time " >> $executelog_path
+
+echo "$execute_time 下面将执行删除命令" >> $executelog_path
+
+cd ~/tsimen2.0/log/serial/
+
+filesum=`ls -l *.log |grep "^-" |wc -l`
+
+echo "$execute_time 当前文件夹(serial)下的 log 文件个数为： $filesum " >> $executelog_path
+
+sudo rm -rf $delete_time*.log
+
+filesum_del=`ls -l *.log |grep "^-" |wc -l`
+
+echo "$execute_time 删除一年前的log文件后当前文件夹下的剩余 log 文件个数为： $filesum_del " >> $executelog_path
+
+filedel=` expr $filesum - $filesum_del`
+
+echo "$execute_time 删除文件数量总计： $filedel " >> $executelog_path
+
+echo "$execute_time 删除完成" >> $executelog_path
+
+cd ~/tsimen2.0/log/web/
+
+filesum=`ls -l *.log |grep "^-" |wc -l`
+
+echo "$execute_time 当前文件夹(web)下的 log 文件个数为： $filesum " >> $executelog_path
+
+sudo rm -rf $delete_time*.log
+
+filesum_del=`ls -l *.log |grep "^-" |wc -l`
+
+echo "$execute_time 删除一年前的log文件后当前文件夹下的剩余 log 文件个数为： $filesum_del " >> $executelog_path
+
+filedel=` expr $filesum - $filesum_del`
+
+echo "$execute_time 删除文件数量总计： $filedel " >> $executelog_path
+
+echo "$execute_time 删除完成" >> $executelog_path
+
+echo "$execute_time ==================================================" >> $executelog_path
